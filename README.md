@@ -6,6 +6,8 @@
 [![Codecov](https://codecov.io/gh/gaelforget/AirSeaFluxes.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/gaelforget/AirSeaFluxes.jl)
 [![Coveralls](https://coveralls.io/repos/github/gaelforget/AirSeaFluxes.jl/badge.svg?branch=master)](https://coveralls.io/github/gaelforget/AirSeaFluxes.jl?branch=master)
 
+[![DOI](https://zenodo.org/badge/240934721.svg)](https://zenodo.org/badge/latestdoi/240934721)
+
 Computation and analysis of air-sea fluxes. 
 
 _This package is in early developement stage when breaking changes can be expected._
