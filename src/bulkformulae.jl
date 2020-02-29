@@ -2,6 +2,12 @@
 """
     bulkformulae(atemp,aqh,speed,sst,hu=10,ht=2,hq=2,zref=10,atmrho=1.2)
 
+Units:
+atemp  - mean air temperature (K)  at height ht (m)
+aqh    - mean air humidity (kg/kg) at height hq (m)
+speed  - mean wind speed (m/s)     at height hu (m)
+sst    - sea surface temperature (K)
+
 Bulk formulae formulation:
 ```
 wind stress = (ust,vst) = rhoA * Cd * Ws * (del.u,del.v)
@@ -144,6 +150,10 @@ evap = -tau.*qstar/rhoConstFresh;
 ch=rd*rh
 ce=rd*re
 
-return hl,hs,evap,ch,ce,tau,ssq,huol,rd,re,rh,ustar,qstar,tstar,psimh,psixh
+out = Dict("hl"=>hl,"hs"=>hs,"evap"=>evap,"ch"=>ch,"ce"=>ce,
+"tau"=>tau,"ssq"=>ssq,"huol"=>huol,"rd"=>rd,"re"=>re,"rh"=>rh,
+"ustar"=>ustar,"qstar"=>qstar,"tstar"=>tstar,"psimh"=>psimh,"psixh"=>psixh)
+
+return out
 
 end
