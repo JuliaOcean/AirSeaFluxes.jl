@@ -1,7 +1,7 @@
 name = "AirSeaFluxes"
 uuid = "3dfee02d-11ce-464a-9ee1-cf3f5c5ccad7"
 authors = ["gaelforget <gforget@mit.edu>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [compat]
 julia = "1"
