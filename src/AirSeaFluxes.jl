@@ -1,6 +1,7 @@
 module AirSeaFluxes
 
-export simpleflux
+export simpleflux, bulkformulae
+include("bulk.jl")
 
 """
     flx(Ca::Float,Co::Float,pisvel::Float)
