@@ -1,13 +1,31 @@
-function bulk(atemp,aqh,speed,sst,hu=10,ht=2,hq=2,zref=10,atmrho=1.2)
-# formulae in short:
-#   wind stress = (ust,vst) = rhoA * Cd * Ws * (del.u,del.v)
-#   Sensib Heat flux = fsha = rhoA * Ch * Ws * del.T * CpAir
-#   Latent Heat flux = flha = rhoA * Ce * Ws * del.Q * Lvap
-#                    = -Evap * Lvap
-# with Ws = wind speed = sqrt(del.u^2 +del.v^2) ;
-#      del.T = Tair - Tsurf ; del.Q = Qair - Qsurf ;
-#      Cd,Ch,Ce = drag coefficient, Stanton number and Dalton number
-#            respectively [no-units], function of height & stability
+
+"""
+    bulkformulae(atemp,aqh,speed,sst,hu=10,ht=2,hq=2,zref=10,atmrho=1.2)
+
+Units:
+atemp  - mean air temperature (K)  at height ht (m)
+aqh    - mean air humidity (kg/kg) at height hq (m)
+speed  - mean wind speed (m/s)     at height hu (m)
+sst    - sea surface temperature (K)
+
+Bulk formulae formulation:
+```
+wind stress = (ust,vst) = rhoA * Cd * Ws * (del.u,del.v)
+Sensib Heat flux = fsha = rhoA * Ch * Ws * del.T * CpAir
+Latent Heat flux = flha = rhoA * Ce * Ws * del.Q * Lvap
+                 = -Evap * Lvap
+```
+
+with Cd,Ch,Ce = drag coefficient, Stanton number and
+Dalton number respectively [no-units], function of
+height & stability; and
+
+```
+Ws = wind speed = sqrt(del.u^2 +del.v^2)
+del.T = Tair - Tsurf ; del.Q = Qair - Qsurf
+```
+"""
+function bulkformulae(atemp,aqh,speed,sst,hu=10,ht=2,hq=2,zref=10,atmrho=1.2)
 
 umin=0.1;
 karman=0.4;
@@ -132,6 +150,10 @@ evap = -tau.*qstar/rhoConstFresh;
 ch=rd*rh
 ce=rd*re
 
-return hl,hs,evap,ch,ce,tau,ssq,huol,rd,re,rh,ustar,qstar,tstar,psimh,psixh
+out = Dict("hl"=>hl,"hs"=>hs,"evap"=>evap,"ch"=>ch,"ce"=>ce,
+"tau"=>tau,"ssq"=>ssq,"huol"=>huol,"rd"=>rd,"re"=>re,"rh"=>rh,
+"ustar"=>ustar,"qstar"=>qstar,"tstar"=>tstar,"psimh"=>psimh,"psixh"=>psixh)
+
+return out
 
 end
