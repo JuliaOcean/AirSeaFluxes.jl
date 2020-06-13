@@ -1,11 +1,11 @@
 
-include("AOGCM1D_helpers.jl")
-include("bulk.jl")
-include("holtslag.jl")
-include("large.jl")
-
 """
     outputs,parameters=AOGCM1D()
+
+    p = dirname(pathof(AirSeaFluxes))
+    include(joinpath(p,"recipes_plots.jl"))
+    p1,p2,p3=plot_final(outputs,parameters)
+    display(p3)
 """
 function AOGCM1D()
 
@@ -114,8 +114,8 @@ UA[1,:]=(0.2/karman).*(log.((ZA.-H/2)./1e-4));
 U0=(0.2/karman).*(log((ZA[end]+H/2)/1e-4)).*ones(1,n+1);
 atemp=THETA[1,1]+d2k; aqh=qA[1,1];
 speed=abs(UA[1,1]); sst=SST[1];
-tmp0=bulk(atemp,aqh,speed,sst,H/2,H/2,H/2,H/2,rhoa[1,1]);
-huol0=tmp0[8];
+tmp0=bulkformulae(atemp,aqh,speed,sst,H/2,H/2,H/2,H/2,rhoa[1,1]);
+huol0=tmp0["huol"]
 TAup=270;
 #U0=(sin(2*pi/n*(1:n)*ndays/5+2*pi/n*3600/dt*sf)*8+U(1,end));
 #UO(:)=0.;
@@ -140,10 +140,24 @@ for i=2:n+1
     ########################################################################
     # surface
     ########################################################################
-    hl,hs,_,ce[i-1],ch[i-1],_,ssq[i-1],xi[i-1],rd[i-1],
-    rh[i-1],re[i-1],ustar[i-1],qstar[i-1],tstar[i-1],psimh[i-1],psixh[i-1]=
-    bulk(TA[i-1,1]+d2k,qA[i-1,1],abs(UA[i-1,1]-UO[i-1,1]),SST[i-1,1],
+    tmp=bulkformulae(TA[i-1,1]+d2k,qA[i-1,1],abs(UA[i-1,1]-UO[i-1,1]),SST[i-1,1],
         H/2,H/2,H/2,10,rhoa[i-1,1]);
+
+    hl=tmp["hl"]
+    hs=tmp["hs"]
+    ce[i-1]=tmp["ce"]
+    ch[i-1]=tmp["ch"]
+    ssq[i-1]=tmp["ssq"]
+    xi[i-1]=tmp["huol"]
+    rd[i-1]=tmp["rd"]
+    rh[i-1]=tmp["rh"]
+    re[i-1]=tmp["re"]
+    ustar[i-1]=tmp["ustar"]
+    qstar[i-1]=tmp["qstar"]
+    tstar[i-1]=tmp["tstar"]
+    psimh[i-1]=tmp["psimh"]
+    psixh[i-1]=tmp["psixh"]
+
     LH[i-1]=-hl;
     SH[i-1]=-hs;
     E[i-1]=-hl/Av;
