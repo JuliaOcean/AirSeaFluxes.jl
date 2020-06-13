@@ -1,19 +1,24 @@
 
 """
-    outputs,parameters=AOGCM1D()
+    AOGCM1D(ndays=60)
 
-    p = dirname(pathof(AirSeaFluxes))
-    include(joinpath(p,"recipes_plots.jl"))
-    p1,p2,p3=plot_final(outputs,parameters)
-    display(p3)
+Atmosphere-Ocean, coupled, one-dimensional column model.
+
+```
+outputs,parameters=AOGCM1D(10)
+p = dirname(pathof(AirSeaFluxes))
+include(joinpath(p,"recipes_plots.jl"))
+p1,p2,p3=plot_final(outputs,parameters)
+display(p3)
+```
 """
-function AOGCM1D()
+function AOGCM1D(ndays=60)
 
 cpl=1;
 moist=1;
 
 dt=60; #seconds
-ndays=60; # duration of simulation in days
+#ndays=60; # duration of simulation in days
 
 n=Int(round(ndays*24*60*60/dt)); # number of time steps
 
