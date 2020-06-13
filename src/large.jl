@@ -1,4 +1,4 @@
-function large(T,S,U,V,rho,Qnet,FWflux,ustar,ZF,lat)
+function kpp(T,S,U,V,rho,Qnet,FWflux,ustar,ZF,lat)
 
 #=
 T=T(i,:)';
@@ -199,4 +199,27 @@ return kM,kT,kS
 
 #[max(kT(imld)) max(ws(imld)) min(Gt(imld)) max(Gt(imld)) dsGt1 h 0.01.*Qnet]
 
+end
+
+function kpp_psim(xi)
+
+if xi>=0
+  y=1+5*xi;
+elseif (xi<0) & (xi>=-0.2)
+  y=(1-16*xi)^(-1/4);
+else
+  y=(1.26-8.38*xi)^(-1/3);
+end
+return y
+end
+
+function kpp_psis(xi)
+if xi>=0
+  y=1+5*xi;
+elseif (xi<0) & (xi>=-1.)
+  y=(1-16*xi)^(-1/2);
+else
+  y=(-28.86-98.96*xi)^(-1/3);
+end
+return y
 end

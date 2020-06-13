@@ -1,14 +1,7 @@
 
-#using PyPlot
-include("heaviside.jl")
-include("delta.jl")
-include("angle_of_incidence.jl")
-include("kpp_psim.jl")
-include("kpp_psis.jl")
+include("AOGCM1D_helpers.jl")
 include("bulk.jl")
 include("holtslag.jl")
-include("holtslag_psim.jl")
-include("holtslag_psis.jl")
 include("large.jl")
 
 """
@@ -176,7 +169,7 @@ for i=2:n+1
     B=gravity_mks.*(rhow0.-rhow)./rhow0;
     Uo=(vlevo:-1:1)/vlevo/10; Vo=zeros(size(Uo)); FWflux=zeros(size(Qnet));
     KOm[i-1,:],KOt[i-1,:],_=
-        large(TO[i-1,:],TO[i-1,:].*0,UO[i,:],Vo,rhow,Qnet[i-1]
+        kpp(TO[i-1,:],TO[i-1,:].*0,UO[i,:],Vo,rhow,Qnet[i-1]
              ,0,ustar[i-1],ZO,lat);
     kot=KOt[i-1,:];
     kom=KOm[i-1,:];
