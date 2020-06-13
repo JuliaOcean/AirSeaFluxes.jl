@@ -1,19 +1,13 @@
-using Dierckx
-using Plots
-using RollingFunctions
-using LinearAlgebra
 
-#using PyPlot
-include("heaviside.jl")
-include("delta.jl")
-include("angle_of_incidence.jl")
-include("kpp_psim.jl")
-include("kpp_psis.jl")
-include("bulk.jl")
-include("holtslag.jl")
-include("holtslag_psim.jl")
-include("holtslag_psis.jl")
-include("large.jl")
+"""
+    outputs,parameters=AOGCM1D()
+
+    p = dirname(pathof(AirSeaFluxes))
+    include(joinpath(p,"recipes_plots.jl"))
+    p1,p2,p3=plot_final(outputs,parameters)
+    display(p3)
+"""
+function AOGCM1D()
 
 cpl=1;
 moist=1;
@@ -120,8 +114,8 @@ UA[1,:]=(0.2/karman).*(log.((ZA.-H/2)./1e-4));
 U0=(0.2/karman).*(log((ZA[end]+H/2)/1e-4)).*ones(1,n+1);
 atemp=THETA[1,1]+d2k; aqh=qA[1,1];
 speed=abs(UA[1,1]); sst=SST[1];
-tmp0=bulk(atemp,aqh,speed,sst,H/2,H/2,H/2,H/2,rhoa[1,1]);
-huol0=tmp0[8];
+tmp0=bulkformulae(atemp,aqh,speed,sst,H/2,H/2,H/2,H/2,rhoa[1,1]);
+huol0=tmp0["huol"]
 TAup=270;
 #U0=(sin(2*pi/n*(1:n)*ndays/5+2*pi/n*3600/dt*sf)*8+U(1,end));
 #UO(:)=0.;
@@ -139,7 +133,6 @@ KAm=zeros(n,vleva);KAt=zeros(n,vleva);
 KOm=zeros(n,vlevo);KOt=zeros(n,vlevo);
 
 for i=2:n+1
-    println(i)
     if rem(i,1440*60/dt)==0
         println(string("Day  ",round(i/(1440*60/dt),digits=5)))
     end
@@ -147,10 +140,24 @@ for i=2:n+1
     ########################################################################
     # surface
     ########################################################################
-    hl,hs,_,ce[i-1],ch[i-1],_,ssq[i-1],xi[i-1],rd[i-1],
-    rh[i-1],re[i-1],ustar[i-1],qstar[i-1],tstar[i-1],psimh[i-1],psixh[i-1]=
-    bulk(TA[i-1,1]+d2k,qA[i-1,1],abs(UA[i-1,1]-UO[i-1,1]),SST[i-1,1],
+    tmp=bulkformulae(TA[i-1,1]+d2k,qA[i-1,1],abs(UA[i-1,1]-UO[i-1,1]),SST[i-1,1],
         H/2,H/2,H/2,10,rhoa[i-1,1]);
+
+    hl=tmp["hl"]
+    hs=tmp["hs"]
+    ce[i-1]=tmp["ce"]
+    ch[i-1]=tmp["ch"]
+    ssq[i-1]=tmp["ssq"]
+    xi[i-1]=tmp["huol"]
+    rd[i-1]=tmp["rd"]
+    rh[i-1]=tmp["rh"]
+    re[i-1]=tmp["re"]
+    ustar[i-1]=tmp["ustar"]
+    qstar[i-1]=tmp["qstar"]
+    tstar[i-1]=tmp["tstar"]
+    psimh[i-1]=tmp["psimh"]
+    psixh[i-1]=tmp["psixh"]
+
     LH[i-1]=-hl;
     SH[i-1]=-hs;
     E[i-1]=-hl/Av;
@@ -176,7 +183,7 @@ for i=2:n+1
     B=gravity_mks.*(rhow0.-rhow)./rhow0;
     Uo=(vlevo:-1:1)/vlevo/10; Vo=zeros(size(Uo)); FWflux=zeros(size(Qnet));
     KOm[i-1,:],KOt[i-1,:],_=
-        large(TO[i-1,:],TO[i-1,:].*0,UO[i,:],Vo,rhow,Qnet[i-1]
+        kpp(TO[i-1,:],TO[i-1,:].*0,UO[i,:],Vo,rhow,Qnet[i-1]
              ,0,ustar[i-1],ZO,lat);
     kot=KOt[i-1,:];
     kom=KOm[i-1,:];
@@ -277,91 +284,14 @@ for i=2:n+1
         #THETA[i,:]=THETA[i,: ]+dTHETA;
     end
 
-    if rem(i,3600*6/dt)==0;#3600*6/dt
-      println(i)
-      f1=plot(-ZO[1:end-1],TO[i,:],ylabel=("TO"));#,ylims=(19,21)
-      f2=plot(-ZO[1:end-1],UO[i,:],ylabel=("UO"));
-      f3=plot(-ZO[1:end-1],kom,ylabel=("KOm"));
-      f4=plot(ZA,UA[i,:],ylabel=("UA"));
-      f5=plot(ZA,Tv.-273.15,ylabel=("Tv")); #ylim([19 21]);...
-      f6=plot(ZA,qA[i,:],ylabel=("q"));
-      f7=plot(ZA,kam,ylabel=("KAm"));
-      plt=plot(f1,f2,f3,f4,f5,f6,f7,layout=(7,1),legend=false,titlefontsize=6)
-      display(plt)
-    end
-
 end
 
-k1=plot(rollmean(U0[1,:],Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              ylabel="U0");
-k2=plot(rollmean(UA[:,end],Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              ylabel="Utop");
-k3=plot(rollmean(UA[:,end]-U0[1,:],Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              ylabel="Utop-U0");
-k4=plot(rollmean(UA[:,1],Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              ylabel="U");
-k5=plot(rollmean(THETA[:,2],Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              ylabel="THETA");
-k6=plot(rollmean(SST,Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              ylabel="SST");
-k7=plot(rollmean(TO[:,10],Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              ylabel="T");
-#tt=string("DZ=",dz)
-plt=plot(k1,k2,k3,k4,k5,k6,k7,layout=(7,1),legend=false)
-display(plt)
+outputs=Dict("U0" => U0,"UA" => UA,"THETA" => THETA,"SST" => SST,"TO" => TO,
+"xi" => xi,"ustar" => ustar,"psimh" => psimh,"psixh" => psixh,
+"rd" => rd,"rh" => rh,"re" => re,"SW" => SW,"LW" => LW,"SH" => SH,"LH" => LH)
 
-#PyPlot.suptitle(tt)
+parameters=Dict("dt"=>dt, "n"=>n, "ndays"=>ndays, "cp"=>cp, "dz"=>dz, "rhow0"=>rhow0)
 
-k1=plot(rollmean(xi[1,:],Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              title="xi");
-k2=plot(rollmean(ustar[1,:],Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              title="ustar");
-k3=plot(rollmean(psimh[1,:],Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              title="psimh");
-k4=plot(rollmean(psixh[1,:],Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              title="psixh");
-k5=plot(rollmean((rd[1,:].^2),Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              title="CD");
-k6=plot(rollmean((rh[1,:].*rd[1,:]),Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              title="CH");
-k7=plot(rollmean((re[1,:].*rd[1,:]),Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              title="CE");
-#tt=string("DZ=",dz)
-plt=plot(k1,k2,k3,k4,k5,k6,k7,layout=(7,1),legend=false)
-display(plt)
+return outputs,parameters
 
-#PyPlot.suptitle(tt)
-
-k1=plot(rollmean(SW[:,1]/cp/(dz*rhow0)*dt,Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              title="SW");
-k2=plot(rollmean(LW[1,:]/cp/(dz*rhow0)*dt,Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              title="LW");
-k3=plot(rollmean(SH[1,:]/cp/(dz*rhow0)*dt,Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              title="SH");
-k4=plot(rollmean(LH[1,:]/cp/(dz*rhow0)*dt,Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              title="LH");
-k5=plot(rollmean((SW[:,1]-LW[1,:]-SH[1,:]-LH[1,:])/cp/(dz*rhow0)*dt,Int(24*60*60/dt)),
-              xticks=(0:24*60*60/dt:n,string.(0:ndays)),
-              title="QNET");
-plt=plot(k1,k2,k3,k4,k5,layout=(5,1),legend=false);
-display(plt)
-
-#PyPlot.suptitle(tt)
+end

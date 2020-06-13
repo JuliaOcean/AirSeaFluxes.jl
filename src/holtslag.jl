@@ -102,3 +102,21 @@ return kM,kS
 #[i max(kM) max(kS) TF max(Ts) U(1)]
 
 end
+
+function holtslag_psim(xi)
+    if xi > 0
+        y = 1 + 5 * xi
+    else
+        y = (1 - 16 * xi)^(-1 / 4)
+    end
+    return y
+end
+
+function holtslag_psis(xi)
+    if xi > 0
+        y = 1 + 5 * xi
+    else
+        y = (1 - 16 * xi)^(-1 / 2)
+    end
+    return y
+end
