@@ -6,12 +6,12 @@ makedocs(;
     pages=[
         "Home" => "index.md",
     ],
-    repo="https://github.com/gaelforget/AirSeaFluxes.jl/blob/{commit}{path}#L{line}",
+    repo="https://github.com/JuliaOcean/AirSeaFluxes.jl/blob/{commit}{path}#L{line}",
     sitename="AirSeaFluxes.jl",
-    authors="gaelforget <gforget@mit.edu>",
+    authors="JuliaOcean <gforget@mit.edu>",
     assets=String[],
 )
 
 deploydocs(;
-    repo="github.com/gaelforget/AirSeaFluxes.jl",
+    repo="github.com/JuliaOcean/AirSeaFluxes.jl",
 )
