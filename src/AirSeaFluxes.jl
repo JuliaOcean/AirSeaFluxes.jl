@@ -3,7 +3,7 @@ module AirSeaFluxes
 using Dierckx
 using LinearAlgebra
 
-export simpleflux, bulkformulae, AOGCM1D
+export simpleflux, bulkformulae, AOGCM1D, calc_pco2
 
 include("simpleflux.jl")
 include("bulkformulae.jl")
