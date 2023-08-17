@@ -13,6 +13,4 @@ Ca=1.0 #atmospeheric value (e.g. equivalent compound concentration)
 simpleflux(Ca,Co,pisvel)
 ```
 """
-function simpleflux(Ca,Co,pisvel)
-    return flx=pisvel*(Ca-Co)
-end
+@inline simpleflux(Ca,Co,pisvel) = pisvel*(Ca-Co)
