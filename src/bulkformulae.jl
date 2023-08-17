@@ -26,7 +26,7 @@ del.T = Tair - Tsurf
 del.Q = Qair - Qsurf
 ```
 """
-function bulkformulae(atemp,aqh,speed,sst,hu=10,ht=2,hq=2,zref=10,atmrho=1.2)
+@inline function bulkformulae(atemp,aqh,speed,sst,hu=10,ht=2,hq=2,zref=10,atmrho=1.2)
 
 umin=0.1
 karman=0.4
