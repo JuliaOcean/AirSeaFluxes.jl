@@ -151,10 +151,8 @@ evap = -tau.*qstar/rhoConstFresh
 ch=rd*rh
 ce=rd*re
 
-out = Dict("hl"=>hl,"hs"=>hs,"evap"=>evap,"ch"=>ch,"ce"=>ce,
-"tau"=>tau,"ssq"=>ssq,"huol"=>huol,"rd"=>rd,"re"=>re,"rh"=>rh,
-"ustar"=>ustar,"qstar"=>qstar,"tstar"=>tstar,"psimh"=>psimh,"psixh"=>psixh)
-
-return out
+return (hl=hl,hs=hs,evap=evap,ch=ch,ce=ce,
+    tau=tau,ssq=ssq,huol=huol,rd=rd,re=re,rh=rh,
+    ustar=ustar,qstar=qstar,tstar=tstar,psimh=psimh,psixh=psixh)
 
 end
