@@ -16,4 +16,8 @@ using Test
     @test isapprox(all["hs"],2.0282408526727473; rtol=1e-2)
     @test isapprox(all["evap"],1.2244888899523058e-9; rtol=1e-2)
     @test isapprox(all["tau"],0.00915548218468587; rtol=1e-2)
+
+    outputs,parameters=AOGCM1D(10)
+    @test isa(outputs,Dict)
+
 end
