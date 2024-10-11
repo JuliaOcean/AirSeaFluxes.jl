@@ -9,7 +9,7 @@ makedocs(;
     repo="https://github.com/JuliaOcean/AirSeaFluxes.jl/blob/{commit}{path}#L{line}",
     sitename="AirSeaFluxes.jl",
     authors="JuliaOcean <gforget@mit.edu>",
-    assets=String[],
+    warnonly = [:cross_references,:missing_docs],
 )
 
 deploydocs(;
