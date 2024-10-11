@@ -22,4 +22,7 @@ using Test
 
     outputs,parameters=AOGCM1D(10)
     @test isa(outputs,Dict)
+
+    pco2=calc_pco2(10,35,1,1)
+    @test isapprox(pco2,0.5393241959361947; rtol=1e-2)
 end
