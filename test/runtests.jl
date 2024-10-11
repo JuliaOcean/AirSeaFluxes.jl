@@ -10,14 +10,16 @@ using Test
     flx=simpleflux(Ca,Co,pisvel)
     @test isapprox(flx,3.858024691358025e-6; atol=1e-2)
 
-    atemp=300.;aqh=0.001;speed=1.; sst=10.
+    atemp=300.
+    aqh=0.001
+    speed=1.
+    sst=10.
     all=bulkformulae(atemp,aqh,speed,sst)
-    @test isapprox(all["hl"],-3.0606099804357885; rtol=1e-2)
-    @test isapprox(all["hs"],2.0282408526727473; rtol=1e-2)
-    @test isapprox(all["evap"],1.2244888899523058e-9; rtol=1e-2)
-    @test isapprox(all["tau"],0.00915548218468587; rtol=1e-2)
+    @test isapprox(all.hl,-3.0606099804357885; rtol=1e-2)
+    @test isapprox(all.hs,2.0282408526727473; rtol=1e-2)
+    @test isapprox(all.evap,1.2244888899523058e-9; rtol=1e-2)
+    @test isapprox(all.tau,0.00915548218468587; rtol=1e-2)
 
     outputs,parameters=AOGCM1D(10)
     @test isa(outputs,Dict)
-
 end
