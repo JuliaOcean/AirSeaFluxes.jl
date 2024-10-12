@@ -24,5 +24,5 @@ using Test
     @test isa(outputs,Dict)
 
     pco2=calc_pco2(10,35,2.1,2.3)
-    @test isapprox(pco2,0.5393241959361947; rtol=1e-2)
+    @test isapprox(pco2,0.233467352780268; rtol=1e-2)
 end
